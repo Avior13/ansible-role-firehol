@@ -1,0 +1,35 @@
+
+OUR_HOSTS="
+{% for f in firehol_hosts %}
+{{ f.host }}
+{% endfor %}
+"
+OUR_SUBNETS="
+{% for s in firehol_subnets %}
+{{ s.network }}
+{% endfor %}
+"
+
+PRIVATE_NETWORKS="
+{% for b in private_subnets %}
+{{ b.network }}
+{% endfor %}
+"
+
+version 5
+
+###################ports######################################################
+{% for p in firehol_ports %}
+server_{{p.service}}_ports="{{p.server}}"
+client_{{p.service}}_ports="{{p.client}}"
+{% endfor %}
+#############################################################################
+
+{% for i in firehol_interfaces %}
+interface {{ i.interface }}
+############################Main##rules###############################
+{% for rule in i.client_rules | default([]) %}client {{ rule }}
+{% endfor %}
+{% for rule in i.server_rules | default([]) %}server {{ rule }}
+{% endfor %}
+{% endfor %}

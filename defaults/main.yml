@@ -1,0 +1,36 @@
+---
+firehol_hosts:
+- host: 192.168.1.1
+
+firehol_subnets:
+- network: 192.168.0.0/24
+
+private_subnets:
+   - network: 10.0.0.0/8
+
+firehol_ports:
+
+    - service: m3307
+      server: "tcp/3307"
+      client: "default"
+
+    - service: redis
+      server: "tcp/6379"
+      client: "default"
+
+firehol_interfaces:
+   - interface: "any world"
+     client_rules: ['all accept dst "${OUR_SUBNETS}"',
+     'all accept dst "${OUR_HOSTS}"',
+     'all accept dst "${PRIVATE_NETWORKS}"'
+      ]
+     server_rules: [
+     'ssh accept src "${OUR_SUBNETS}"',
+     'ssh accept src "${OUR_HOSTS}"',
+     'all accept src "${OUR_SUBNETS}"',
+     'all accept src "${OUR_HOSTS}"',
+     'm3307 accept src "${OUR_HOSTS}"',
+     'http accept',
+     'https accept',
+     '"icmp ping" accept'
+                    ]

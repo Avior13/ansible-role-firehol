@@ -1,0 +1,19 @@
+---
+- name: "install or ensure firehol present"
+  apt: name=firehol state=present
+
+- name: "template firehol.conf"
+  template:
+    src: "firehol.conf.j2"
+    dest: "/etc/firehol/firehol.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable firehol
+  replace: dest=/etc/default/firehol regexp='START_FIREHOL=NO' replace='START_FIREHOL=YES'
+  notify:
+      - restart firehol
+
+- name: Enable firehol service
+  service: name=firehol enabled=yes state=restarted
